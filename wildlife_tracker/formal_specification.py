@@ -1,4 +1,8 @@
 from typing import Any, List, Optional
+from wildlife_tracker.animal_management.animal import Animal
+from wildlife_tracker.habitat_management.habitat import Habitat
+from wildlife_tracker.migration_tracking.migration import Migration
+from wildlife_tracker.migration_tracking.migration_path import MigrationPath
 
 
 age: Optional[int] = None
@@ -45,7 +49,7 @@ def create_migration_path(species: str, start_location: Habitat, destination: Ha
 def get_animal_by_id(animal_id: int) -> Optional[Animal]:
     pass
 
-def get_animal_details(animal_id) -> dict[str, Any]:
+def get_animal_details(animal_id: int) -> dict[str, Any]:
     pass
 
 def get_animals_in_habitat(habitat_id: int) -> List[Animal]:
@@ -100,7 +104,7 @@ def get_migrations_by_start_date(start_date: str) -> list[Migration]:
     pass
 
 def get_migrations_by_status(status: str) -> list[Migration]:
-    pass
+   pass
 
 def get_migration_path_details(path_id) -> dict:
     pass
