@@ -28,6 +28,20 @@ class Meal:
 
 
 def create_meal(meal: str, cuisine: str, price: float, difficulty: str) -> None:
+    """
+    Creates a new meal in the meals table.
+    
+    Args:
+        meal (str): The name of the meal.
+        cuisine (str): The cuisine type of the meal.
+        price (float): the price of the meal.
+        difficulty (str): the difficulty of the meal.
+        
+    Raises:
+        ValueError: if price or difficulty are invalid.
+        sqlite3.IntegrityError: If a meal with the same meal name exists.
+        sqlite3.Error: For any other database errors
+    """
     if not isinstance(price, (int, float)) or price <= 0:
         raise ValueError(f"Invalid price: {price}. Price must be a positive number.")
     if difficulty not in ['LOW', 'MED', 'HIGH']:
@@ -74,6 +88,16 @@ def clear_meals() -> None:
         raise e
 
 def delete_meal(meal_id: int) -> None:
+    """
+    Soft deletes a meal from the database by marking it as deleted.
+    
+    Args:
+        meal_id (int): the ID of the meal to delete.
+
+    Raises:
+        ValueError: If the song with the given ID does not exist or is already marked as deleted.
+        sqlite3.Error: If any other database error occurs.
+    """
     try:
         with get_db_connection() as conn:
             cursor = conn.cursor()
@@ -97,6 +121,19 @@ def delete_meal(meal_id: int) -> None:
         raise e
 
 def get_leaderboard(sort_by: str="wins") -> dict[str, Any]:
+    """
+    Returns the leaderboard of meals, sorted either by wins or win percentage (wins * 1.0 / battles)
+    
+    Args:
+        sort_by (str): Which column to sort by (either "wins" or "win_pct").
+        
+    Returns:
+        dict (dict[str, any]): A dictionary representing the sorted leaderboard of non-deleted meals.
+    
+    Raises:
+        ValueError: If the sort_by parameter is not "wins" or "win_pct".
+        sqlite3.Error: If any other database error occurs.
+    """
     query = """
         SELECT id, meal, cuisine, price, difficulty, battles, wins, (wins * 1.0 / battles) AS win_pct
         FROM meals WHERE deleted = false AND battles > 0
@@ -138,6 +175,18 @@ def get_leaderboard(sort_by: str="wins") -> dict[str, Any]:
         raise e
 
 def get_meal_by_id(meal_id: int) -> Meal:
+    """
+    Retrieves a meal from the database by its meal ID.
+    
+    Args:
+        meal_id (int): The ID of the meal to retrieve.
+    
+    Returns:
+        Meal: the Meal object corresponding to the meal_id.
+    
+    Raises:
+        ValueError: If the meal is not found or is marked as deleted.
+    """
     try:
         with get_db_connection() as conn:
             cursor = conn.cursor()
@@ -159,6 +208,18 @@ def get_meal_by_id(meal_id: int) -> Meal:
 
 
 def get_meal_by_name(meal_name: str) -> Meal:
+    """
+    Retrieves a meal from the database by its meal name.
+    
+    Args:
+        meal_name (str): The name of the meal to retrieve.
+    
+    Returns:
+        Meal: The Meal object corresponding to the meal_name.
+    
+    Raises:
+        ValueError: If the meal is not found or is marked as deleted.
+    """
     try:
         with get_db_connection() as conn:
             cursor = conn.cursor()
@@ -180,6 +241,17 @@ def get_meal_by_name(meal_name: str) -> Meal:
 
 
 def update_meal_stats(meal_id: int, result: str) -> None:
+    """
+    Updates the stats of a meal based on whether it won or lost a battle.
+    
+    Args:
+        meal_id (int): The ID of the meal to update.
+        result (str): The result of the battle to use for updating stats (either "win" or "loss").
+    
+    Raises:
+        ValueError: If the song does not exist, is marked as deleted, or an invalid result is passed.
+        sqlite3.Error: If there is any other database error.
+    """
     try:
         with get_db_connection() as conn:
             cursor = conn.cursor()
