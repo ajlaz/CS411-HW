@@ -39,14 +39,14 @@ def test_add_meal_to_full_combatants(battle_model, sample_combatants, sample_mea
     """Test error when adding a meal to the combatants list when it is full."""
 
     battle_model.combatants.extend(sample_combatants)
-    assert len(battle_model.playlist) == 2
+    assert len(battle_model.combatants) == 2
 
     battle_model.prep_combatant(sample_meal3)
     with pytest.raises(ValueError, match="Combatant list is full, cannot add more combatants."):
         battle_model.prep_combatant(sample_meal3)
 
 ##################################################
-# Remove Song Management Test Cases
+# Remove Meal Management Test Cases
 ##################################################
 
 
@@ -62,8 +62,8 @@ def test_remove_meal_by_loss(battle_model, sample_combatants):
 
 
 def test_clear_combatants(battle_model, sample_meal1):
-    """Test clearing the entire playlist."""
-    battle_model.add_song_to_playlist(sample_meal1)
+    """Test clearing the entire combatants list."""
+    battle_model.prep_combatant(sample_meal1)
 
     battle_model.clear_combatants()
     assert len(battle_model.combatants) == 0, "Combatant list should be empty after clearing"
