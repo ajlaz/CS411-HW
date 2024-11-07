@@ -2,3 +2,5 @@
 
 .DS_Store
 **/.DS_Store
+**/.pytest_cache
+**/db
