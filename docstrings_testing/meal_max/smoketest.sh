@@ -53,7 +53,7 @@ check_db() {
 ##########################################################
 
 clear_catalog() {
-    echo "Clearing the meal catalog..."
+    echo "Clearing the meals table..."
     curl -s -X DELETE "$BASE_URL/clear-meals" | grep -q '"status": "success"'
 }
 
@@ -125,6 +125,80 @@ get_meal_by_name() {
 
 ############################################################
 #
+# Battle Management
+#
+############################################################
+
+prep_combatant() {
+  meal=$1
+  cuisine=$2
+  price=$3
+
+  echo "Adding meal to combatants: $meal - $cuisine ($price)..."
+  response=$(curl -s -X POST "$BASE_URL/prep-combatant" \
+    -H "Content-Type: application/json" \
+    -d "{\"meal\":\"$meal\", \"cuisine\":\"$cuisine\", \"price\":$price}")
+
+  if echo "$response" | grep -q '"status": "success"'; then
+    echo "Meal added to combatants successfully."
+    if [ "$ECHO_JSON" = true ]; then
+      echo "Song JSON:"
+      echo "$response" | jq .
+    fi
+  else
+    echo "Failed to add meal to combatants."
+    exit 1
+  fi
+}
+
+clear_combatants() {
+  echo "Clearing combatants..."
+  response=$(curl -s -X POST "$BASE_URL/clear-combatants")
+
+  if echo "$response" | grep -q '"status": "success"'; then
+    echo "Combatants cleared successfully."
+  else
+    echo "Failed to clear combatants."
+    exit 1
+  fi
+}
+
+############################################################
+#
+# Start Battle
+#
+############################################################
+
+battle() {
+  echo "Starting battle..."
+  response=$(curl -s -X GET "$BASE_URL/battle")
+
+  if echo "$response" | grep -q '"status": "success"'; then
+    echo "Battle is now occurring."
+  else
+    echo "Failed to start battle."
+    exit 1
+  fi
+}
+
+get_combatants() {
+  echo "Retrieving all meals from combatants..."
+  response=$(curl -s -X GET "$BASE_URL/get-combatants")
+
+  if echo "$response" | grep -q '"status": "success"'; then
+    echo "All meals retrieved successfully."
+    if [ "$ECHO_JSON" = true ]; then
+      echo "Songs JSON:"
+      echo "$response" | jq .
+    fi
+  else
+    echo "Failed to retrieve all meals from combatants."
+    exit 1
+  fi
+}
+
+############################################################
+#
 # Leaderboard
 #
 ############################################################
@@ -150,6 +224,7 @@ check_db
 
 # Clear the meal catalog
 clear_catalog
+clear_combatants
 
 # Add some meals to the catalog
 create_meal "Spaghetti" "Italian" 12.99 "MED"
@@ -160,6 +235,13 @@ delete_meal_by_id 1
 
 get_meal_by_id 2
 get_meal_by_name "Pizza"
+
+prep_combatant "Pizza" "Italian" 14.99 "LOW"
+prep_combatant "Sushi" "Japanese" 19.99 "HIGH"
+
+get_combatants
+
+battle
 
 get_leaderboard
 
