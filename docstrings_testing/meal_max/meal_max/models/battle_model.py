@@ -32,9 +32,8 @@ class BattleModel:
             ValueError: If there are not enough combatants to start the battle.
 
         Side-effects:
-            Logs the start, scores, and winner of the battle
             Updates each combatant's win/loss stats 
-            Removes the losing combatant(s) from the combatant list.
+            Removes the losing combatant from the combatants list.
         """
 
         logger.info("Two meals enter, one meal leaves!")
