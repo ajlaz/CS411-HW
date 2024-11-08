@@ -53,7 +53,7 @@ check_db() {
 ##########################################################
 
 clear_catalog() {
-    echo "Clearing the meals table..."
+    echo "Clearing the meals catalog..."
     curl -s -X DELETE "$BASE_URL/clear-meals" | grep -q '"status": "success"'
 }
 
